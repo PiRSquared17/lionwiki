@@ -1,0 +1,186 @@
+/* Plugin wkp_Tables */
+table.wikitable {
+  border-collapse: collapse;
+  border: 1px solid #ccc;
+}
+
+table.wikitable td {
+  border: 1px solid #ccc;
+  text-align: center;
+  vertical-align: middle;
+  padding: 2px;
+}
+
+table.wikitable td.em {
+  background: #ccc;
+  font-weight: bold;
+} 
+
+/* Table Of Content */
+#toc {
+     border: 1px dashed #11141A;
+     padding : 5px 8px 5px 8px;
+     float:right;
+     padding-right: 2em;
+     list-style : none;
+}
+
+#toc ul {
+  list-style : none;
+  padding-left: 10px;
+}
+
+#toc li {
+     font-size: 11px;
+     padding-left: 10px;
+}
+#toc ul li {
+     font-size: 10px;
+}
+#toc ul ul li {
+     font-size: 9px;
+}
+#toc ul ul ul li {
+     font-size: 8px;
+}
+#toc ul ul ul ul li {
+     font-size: 7px;
+}
+
+img {
+border: 0px
+}
+
+body {
+background-color: #828A99;
+font-family: Trebuchet, "Trebuchet MS", sans-serif;
+font-size: 14px;
+line-height: 16px;
+}
+
+pre
+{ 
+border: 1px dotted #ccc;
+padding: 4px;
+width: 640px;
+overflow: auto;
+margin : 3px;
+}
+
+code
+{
+font-family: "Courier New", monospace;
+font-size: 12px;
+}
+
+a {
+color: #333C4D;
+}
+
+a.pending {
+color: #7F4736;
+}
+
+a.url {
+color: #808080;
+}
+
+a:hover {
+color: #57A2D4;
+background: inherit;
+}
+
+.category {
+  color: #999;
+  background: inherit;
+}
+
+th
+{
+padding-left: 1em;
+background: #333C4D;
+color: white;
+text-align: left;
+border-bottom: 1px dashed #11141A;
+}
+
+th h1 {
+font-family: "Futura Condensed", Futura, sans-serif !important;
+font-weight: bolder;
+padding-top: 10px;
+padding-bottom: 4px;
+margin-top: 0;
+margin-bottom: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+font-family: "Futura Condensed", Futura, sans-serif !important;
+margin-top : 0px;
+}
+
+th a {
+text-decoration: none;
+color: white !important;
+}
+
+th p {
+font-size: 80%;
+margin-top: 0;
+margin-bottom: 0;
+padding-left: 2em;
+}
+
+#mainTable {
+border: 1px solid #11141A;
+}
+
+.pageLinks {
+padding-left: 1em;
+padding-right: 1em;
+font-size: 80%;
+margin-top: 0;
+margin-bottom: 0;
+background-color: #eee;
+color: #666;
+}
+.pageLinks a {
+font-weight: bold;
+text-decoration: none;
+}
+
+#headerLinks td {
+border-bottom: 1px dashed #ccc !important;
+}
+
+#footerLinks td {
+border-top: 1px dashed #ccc !important;
+}
+
+#mainContent {
+font-size: 90%;
+padding: 1em;
+background-color: white;
+}
+
+#mainContent h2:first-child {
+margin-top: 0px;
+}
+
+
+.error {
+color: #F25A5A;
+font-size: 80%;
+font-weight: bold;
+}
+
+form {
+display: inline
+}
+
+#content-textarea {
+	width : 100%;
+}
+
+#content-submit {
+	float : right;
+}
