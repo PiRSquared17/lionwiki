@@ -1,5 +1,6 @@
 <?
 	$T_HOME = "Hauptseite"; 
+	$T_HELP = "Hilfe";
 	$T_EDIT = "Editieren";
 	$T_DONE = "Speichern"; // event. Änderungen speichern
 	$T_SEARCH = "Suchen";

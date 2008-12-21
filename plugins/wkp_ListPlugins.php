@@ -1,57 +1,35 @@
 <?php
-/*
-	List plugins lists all active plugins and presents functions they offer. It creates
-	unordered (possibly nested) list of plugins and their functions.
-	
-	It is activated by ?action=listplugins
-*/
 
+/** List of installed plugins
+ * Access through : ?action=list
+ */
 class ListPlugins
 {
-  var $desc = array(
-		array("ListPlugins", "provides this page :)")
-	);
-
-	// print nested functions/description
-	function getUL($arr)
-	{
-	  $ret = "";
-	  
-    foreach($arr as $line)
-	    if(is_array($line[0]))
-	      $ret .= "<ul>\n" . $this->getUL($line) . "</ul>\n";
-			else
-			  $ret .= "<li>" . $line[0] . " " . $line[1] . "</li>\n";
-
-		return $ret;
-	}
+	public $description = "List of installed plugins";
 
 	function action($a)
 	{
-	  global $plugins, $CON, $TITLE, $editable;
+	  global $plugins, $CON, $PAGE_TITLE, $editable;
+	  
+	  if($a == "list")
+	  {
+	     $CON = '';
+	     $editable = false;
+	     $PAGE_TITLE = "List of all plugins";
 
-	  if($a == "listplugins") {
-	    $editable = false;
-	    $TITLE = "List of plugins";
-
-			$CON = "<ul>\n";
-
-	    foreach($plugins as $p)
-	      $CON .= $this->getUL($p->desc);
-
-			$CON .= "</ul>\n";
-
-	    return true;
+	     foreach($plugins as $p)
+	        $CON .= get_class($p) . " : ". $p->description ."<br/>\n";
+	        
+	     return true;
 	  }
-
 	  return false;
 	}
 
 	function template()
 	{
-	  global $html;
-
-		$html = template_replace("plugin:LIST_OF_PLUGINS", "<a href=\"?action=listplugins\" rel=\"nofollow\">List of installed plugins</a>", $html);
+	  global $CON;
+	
+		str_replace("{plugin:LIST_OF_PLUGINS}", "<a href=\"?action=list\">List of installed plugins.</a>", $CON);
 	}
 }
 ?>

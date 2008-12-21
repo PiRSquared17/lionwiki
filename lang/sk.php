@@ -1,6 +1,6 @@
 <?
 	$T_HOME = "Hlavná strana";
-	$T_SYNTAX = "Syntaxe";
+	$T_HELP = "Pomoc";
 	$T_EDIT = "Editovať";
 	$T_DONE = "Uložiť zmeny";
 	$T_SEARCH = "Hľadať";
@@ -20,6 +20,4 @@
 	$T_CREATE_PAGE = "Vytvoriť stránku s názvom";
 	$T_PROTECTED_READ = "Na zobrazenie obsahu stránok je potrebné zadať heslo: ";
 	$TE_WRONG_PASSWORD = "Zadané heslo nie je správne.";
-	
-	$TIME_FORMAT = "%d. %m. %Y %R";
 ?>

@@ -1,5 +1,6 @@
 <?php
 	$T_HOME = "Accueil";
+	$T_HELP = "Aide";
 	$T_EDIT = "Éditer";
 	$T_DONE = "Enregistrer";
 	$T_SEARCH = "Rechercher";

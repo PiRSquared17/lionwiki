@@ -1,0 +1,126 @@
+This document explains all syntax features of core LionWiki. Syntax of tables (provided by plugin) is on separate page: [Tables].
+
+!Headings
+Example:
+{TOC}
+{{!Heading H2
+!!Heading H3
+!!!Heading H4}}
+
+!Heading H2
+!!Heading H3
+!!!Heading H4
+
+More exclamation marks you use, smaller heading is (up to 5 exclamation marks). This is different from WiKiss (possibly also TigerWiki), ! is used for H2, because H1 should be reserved for title. Exclamation marks has to be exactly at the start of the line.
+
+!Lists
+!!Unordered list
+
+{{* Fruit
+** Apple
+*** Granny smith
+*** Golden delicious
+** Orange
+* Vegetables
+** Garlic
+** Onion}}
+
+* Fruit
+** Apple
+*** Granny smith
+*** Golden delicious
+** Orange
+* Vegetables
+** Garlic
+** Onion
+
+!!Ordered list
+
+{{# First item 
+## First subitem 
+### First subsubitem
+## Second subitem 
+# Second item}}
+
+# First item 
+## First subitem 
+### First subsubitem
+## Second subitem 
+# Second item
+
+!Bold, italic ...
+^''^'Bold^''^' --> '''Bold''' (three apostrophes)
+^''Italic^'' --> ''Italic'' (two apostrophes)
+^''^''^'Bold and italic^''^''^' --> '''''Bold and italic''''' (five apostrophes)
+^'--Strikethrough--' --> '--Strikethrough--'
+^'__Underlined__' --> '__Underlined__'
+
+!Emails, links, images
+Links to other pages can be created like this:
+^[Main page] -> [Main page]
+
+or 
+
+^[Main project page|Main page] -> [Main project page|Main page]
+{br}
+Emails and web links are automatically recognized:
+
+^http://lionwiki.0o.cz -> http://lionwiki.0o.cz
+^lionwiki@example.com -> lionwiki@example.com
+{br}
+If you want to have different link and link text, you can use following syntax:
+^[LionWiki|^http://lionwiki.0o.cz] -> [LionWiki|http://lionwiki.0o.cz]
+{br}
+You can use also relative links, but they have to start with ./ (otherwise it will be interpreted as Wiki page)
+So if you want to link some HTML page in the same directory, you use:
+
+^[Interesting page|./SomeWebPage.html] -> [Interesting page|./SomeWebPage.html]
+{br}
+One bonus feature is link to article on Wikipedia of your language:
+^[?Albert Einstein] -> [?Albert Einstein]
+
+!!Images
+LionWiki can't upload files to the server (and will not), so you will have to place it somewhere manually.
+
+^[^http://lionwiki.0o.cz/lion.jpg] --> [http://lionwiki.0o.cz/lion.jpg]
+
+You can use your image as your link: ^[^http://lionwiki.0o.cz/lion.jpg|^http://lionwiki.0o.cz/] --> 
+[http://lionwiki.0o.cz/lion.jpg|http://lionwiki.0o.cz/]
+
+You can also place your image to the left or right, possibly combined with link feature:
+[http://lionwiki.0o.cz/lion.jpg|left] [http://lionwiki.0o.cz/lion.jpg|http://lionwiki.0o.cz/|right]
+<-- ^[^http://lionwiki.0o.cz/lion.jpg|left]
+^[^http://lionwiki.0o.cz/lion.jpg|^http://lionwiki.0o.cz/|right] -->
+
+{br}
+!Other
+!!Characters
+Some sequences of characters are automatically replaced:
+* Arrows : <^-- : <--, ^--> : -->, <^--> : <-->
+* Copyrights : ^(c) or ^(C) : (c), ^(r) or ^(R) : (r)
+
+!!Code
+Code syntax is useful when you need to keep original spacing and layout of text, especially for programming source code.
+
+^{{import sys
+if len(sys.argv) == 2:
+   print "Hello",sys.argv^[1]}}
+does:
+{{import sys
+if len(sys.argv) == 2:
+   print "Hello",sys.argv[1]}}
+
+!!Horizontal line
+----
+by '''^----'''
+
+!!Suppressing wiki syntax
+By using ^^ character before syntax keyword or using ^{{something}}. If you still don't know how, take a look on wiki code of this page, there are plenty of examples. If you want to insert ^^ character, you have to double it, i.e. ^^^^
+
+!!HTML code
+Do you want to insert youtube video to your site? Or any other HTML code? Just insert it between ^{html}some html code{/html}.
+
+{html}<object width="217" height="177"><param name="movie" value="http://www.youtube.com/v/OvZrhdy2UdY&hl=cs&fs=1"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/OvZrhdy2UdY&hl=cs&fs=1" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="217" height="177"></embed></object>{/html}
+
+!!Newline
+LionWiki joins adjacent newlines together, if you need more than one newline, use ^{br}.

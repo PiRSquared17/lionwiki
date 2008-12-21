@@ -11,34 +11,15 @@
 
 class Captcha
 {
-	var $desc = array(
-		array("Captcha plugin", "is a spam filtering plugin asking simple questions.")
-	);
-
-  var $question_file;
-  var $permanent = true; // remember first correct answer and don't ask again
-	var $cookie_password;
+	public $description = "Text captcha";
+  public $question_file;
+  public $permanent = true; // remember first correct answer and don't ask again
+	public $cookie_password;
 
 	function __construct()
 	{
-	  global $LANG, $PLUGINS_DATA_DIR;
-	
-	  $this->question_file = dirname(__FILE__) . "/" . $PLUGINS_DATA_DIR . "Captcha/";
-	
-	  if(file_exists($this->question_file . $LANG . "_questions.txt"))
-	    $this->question_file .= $LANG . "_questions.txt";
-		else
-		  $this->question_file .= "en_questions.txt";
-		  
-    $this->cookie_password = md5($_SERVER["SCRIPT_FILENAME"]); // pseudo random string
-	}
-	
-	function Captcha() // PHP 4 contructor/destructor emulation
-	{
-		$argcv = func_get_args();
-		call_user_func_array(array(&$this, '__construct'), $argcv); // constructor
-	
-		//register_shutdown_function(array(&$this, '__destruct')); // destructor
+    $this->question_file = dirname(__FILE__) . "/captcha_questions.txt";
+    $this->cookie_password = md5($_SERVER["SCRIPT_FILENAME"]);
 	}
 
   /*
@@ -52,7 +33,7 @@ class Captcha
     $q = fopen($this->question_file, "r");
 
     if(!$q) {
-      echo "Captcha plugin: Can't open captcha questions file $this->question_file.";
+      warning("Captcha plugin: Can't open captcha questions file $this->question_file.");
     
       return 0; // Oops
 		}
@@ -67,7 +48,7 @@ class Captcha
   }
 
   /*
-    Function returns $line. line of $i. question. Convention is that 1. line is question and second line is answer(s). Numbering is Pascal-like, that means that getQuestion(1, 1) returns 1. line of 1. question.
+    Function return $line. line of $i. question. Convention is that 1. line is question and second line is answer(s). Numbering is Pascal-like, that means that getQuestion(1, 1) returns 1. line of 1. question.
   */
 
   function getQuestion($i, $line)
@@ -77,7 +58,7 @@ class Captcha
     $q = fopen($this->question_file, "r");
 
     if(!$q) {
-      echo "Captcha plugin: Can't open captcha questions file $this->question_file.";
+      warning("Captcha plugin: Can't open captcha questions file $this->question_file.");
     
       return 0; // Oops
 		}
@@ -103,9 +84,9 @@ class Captcha
 
 	function checkCaptcha()
 	{
-	  global $PASSWORD_MD5, $error, $plugin_saveok;
+	  global $PASSWORD, $error, $plugin_saveok;
 
-    if(!empty($PASSWORD_MD5) || ($this->permanent && $_COOKIE["LW_CAPTCHA"] == $this->cookie_password))
+    if(!empty($PASSWORD) || ($this->permanent && $_COOKIE["AUT_CAPTCHA"] == $this->cookie_password))
 			return true;
 
     $question_id = $_REQUEST["qid"];
@@ -126,7 +107,7 @@ class Captcha
 	      $equals = true;
 	      
 	      if($this->permanent)
-	      	setcookie('LW_CAPTCHA', $this->cookie_password, time() + 365 * 24 * 3600);
+	      	setcookie('AUT_CAPTCHA', $this->cookie_password, time() + 365 * 24 * 3600);
 
 				break;
 	    }
@@ -145,17 +126,17 @@ class Captcha
 
 	function template()
 	{
-  	global $html, $PASSWORD_MD5, $action;
+  	global $html, $PASSWORD, $action;
 
-		if($action != "edit" || !empty($PASSWORD_MD5) || ($this->permanent && $_COOKIE["LW_CAPTCHA"] == $this->cookie_password))
+		if($action != "edit" || !empty($PASSWORD) || ($this->permanent && $_COOKIE["AUT_CAPTCHA"] == $this->cookie_password))
 			return;
 			
 		$question_count = $this->questionCount();
   	$question_id = rand(1, $question_count);
   	$question_text = trim($this->getQuestion($question_id, 1));
 
-		$html = template_replace("plugin:CAPTCHA_QUESTION", $question_text, $html);
-		$html = template_replace("plugin:CAPTCHA_INPUT", "<input type=\"hidden\" name=\"qid\" value=\"$question_id\" /><input type=\"text\" id=\"captcha-input\" name=\"ans\" class=\"input\" value=\"\" />", $html);
+		$html = str_replace("{plugin:CAPTCHA_QUESTION}", $question_text, $html);
+		$html = str_replace("{plugin:CAPTCHA_INPUT}", "<input type=\"hidden\" name=\"qid\" value=\"$question_id\" /><input type=\"text\" id=\"captcha-input\" name=\"ans\" class=\"input\" value=\"\" />", $html);
 	}
 }
 
