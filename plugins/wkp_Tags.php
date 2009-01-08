@@ -164,8 +164,7 @@ class Tags
 	  
 	  $CON = preg_replace("/\{tags:.+\}/U", "", $CON);
 	  
-	  if(template_match("plugin:TAG_LIST", $html, $match_html) || template_match("TAG_LIST", $CON, $match_con)) {
-	  
+	  if(template_match("plugin:TAG_LIST", $html) || template_match("TAG_LIST", $CON)) {
 			$tags = $this->getTags($page);
 					
 			$tag_array = array();
@@ -178,11 +177,11 @@ class Tags
 			else
 				$t = "<div class=\"tagList\">Tags: \n" . implode(", ", $tag_array) . "</div>\n";
 			
-			$CON = str_replace($match_con[0], $t, $CON);	
-			$html = str_replace($match_html[0], $t, $html);
+			$CON = template_replace("TAG_LIST", $t, $CON);
+			$html = template_replace("plugin:TAG_LIST", $t, $html);
 		}
 		
-		if(template_match("plugin:TAG_CLOUD", $html, $match_html) || template_match("TAG_CLOUD", $CON, $match_con)) {
+	  if(template_match("plugin:TAG_CLOUD", $html) || template_match("TAG_CLOUD", $CON)) {
 			$f = @fopen($this->tagfile, "rb");
 			
 			if(!$f) {
@@ -213,23 +212,29 @@ class Tags
 			
 			for($i = 0; $i < max(0, count($tag_counts) - $this->tag_cloud_max); $i++)
 				array_pop($tag_counts);
-				
+			
 			$count_max = reset($tag_counts);
 			$count_min = end($tag_counts);
 
-			$tag_counts = array_merge(array_flip(array_rand($tag_counts, count($tag_counts))), $tag_counts); // shuffle and preserve key => value relationship
-		
+			// strange behavior of array_rand(), it doesn't return array when given array with one member
+			if(count($tag_counts) != 1)
+				$tag_counts = array_merge(array_flip(array_rand($tag_counts, count($tag_counts))), $tag_counts); // shuffle and preserve key => value relationship
+						
 			$t = "<div class=\"tagCloud\"><b>Tag cloud</b><br />\n";
 			
-			foreach($tag_counts as $tag => $count)
-				$t .= "<a class=\"tagCloudLink\" style=\"font-size:".
-				floor(($count - $count_min) / ($count_max - $count_min) * ($this->font_max - $this->font_min) + $this->font_min)
-				."px\" href=\"?action=tagsearch&amp;tag=".urlencode($tag)."\">".htmlspecialchars($tag)."</a>\n";
+			foreach($tag_counts as $tag => $count) {
+				if($count_max == $count_min)
+					$tagsize = 11;
+				else
+					$tagsize = floor(($count - $count_min) / ($count_max - $count_min) * ($this->font_max - $this->font_min) + $this->font_min);
+			
+				$t .= "<a class=\"tagCloudLink\" style=\"font-size:${tagsize}px\" href=\"?action=tagsearch&amp;tag=".urlencode($tag)."\">".htmlspecialchars($tag)."</a>\n";
+			}
 			
 			$t .= "</div>\n";
 			
-			$CON = str_replace($match_con[0], $t, $CON);
-			$html = str_replace($match_html[0], $t, $html);
+			$html = template_replace("plugin:TAG_CLOUD", $t, $html);
+			$CON = template_replace("TAG_CLOUD", $t, $CON);
 		}
 	}
 	
