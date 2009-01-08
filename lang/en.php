@@ -18,7 +18,7 @@
 	$T_NO_HISTORY = "No history.";
 	$T_RESTORE = "Restore";
 	$T_REV_DIFF = "<b>Difference between revisions from {REVISION1} and {REVISION2}.</b>";
-	$T_REVISION = "'''This revision is from {TIME}. You can {RESTORE} it.'''\n";
+	$T_REVISION = "'''This revision is from {TIME}. You can {RESTORE} it.'''\n\n";
 	$T_PASSWORD = "Password";
 	$T_EDIT_SUMMARY = "Edit summary";
 	$T_ERASE_COOKIE = "Erase cookies";

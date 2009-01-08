@@ -1,5 +1,7 @@
 {TOC}
-This document explains all syntax features of core LionWiki. Syntax of tables (provided by plugin) is on separate page: [Tables].
+''This is [?Wiki], so feel free to correct any factual or grammatical error.''
+
+This document explains all syntax features of core LionWiki. Syntax of tables (provided by plugin) is on separate page: [Tables plugin].
 
 !Headings
 Example:
@@ -52,8 +54,8 @@ More exclamation marks you use, smaller heading is (up to 5 exclamation marks). 
 ^''^'Bold^''^' --> '''Bold''' (three apostrophes)
 ^''Italic^'' --> ''Italic'' (two apostrophes)
 ^''^''^'Bold and italic^''^''^' --> '''''Bold and italic''''' (five apostrophes)
-^--Strikethrough-- --> --Strikethrough--
-^__Underlined__ --> __Underlined__
+^'--Strikethrough--' --> '--Strikethrough--'
+^'__Underlined__' --> '__Underlined__'
 !!Since LionWiki 2.0
 ^{small}Small text^{/small} --> {small}Small text{/small}
 2^{sup}10^{/sup} --> x{sup}10{/sup}
@@ -141,7 +143,7 @@ if len(sys.argv) == 2:
 
 !!Horizontal line
 ----
-by '''^----'''
+by '''^--^--'''
 
 !!Suppressing wiki syntax
 By using ^^ character before syntax keyword or using ^{{something}}. If you still don't know how, take a look on wiki code of this page, there are plenty of examples. If you want to insert ^^ character, you have to double it, i.e. ^^^^
@@ -157,5 +159,8 @@ Do you want to insert youtube video to your site? Or any other HTML code? Just i
 !!Newline
 LionWiki joins adjacent newlines together, if you need more than one newline, use ^{br}.
 
-!!Inernal comments
-''Since LionWiki 2.0''. You can insert internal comments not intended to be displayed using HTML-like syntax ^<!-- text not intended to be displayed ^-->
+!!Internal comments
+''Since LionWiki 2.0''. You can insert internal comments not intended to be displayed using HTML-like syntax ^<!^-- text not intended to be displayed ^-->
+
+{tags:syntax}
+
