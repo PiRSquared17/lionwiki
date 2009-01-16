@@ -1,6 +1,3 @@
-{TOC}
-''This is [?Wiki], so feel free to correct any factual or grammatical error.''
-
 This document explains all syntax features of core LionWiki. Syntax of tables (provided by plugin) is on separate page: [Tables plugin].
 
 !Headings
@@ -72,7 +69,7 @@ or
 Emails and web links are automatically recognized:
 
 ^http://lionwiki.0o.cz -> http://lionwiki.0o.cz
-^lionwiki@example.com -> lionwiki@example.com
+lionwiki^@example.com -> lionwiki@example.com
 {br}
 If you want to have different link and link text, you can use following syntax:
 ^[LionWiki|^http://lionwiki.0o.cz] -> [LionWiki|http://lionwiki.0o.cz]
@@ -149,7 +146,7 @@ by '''^--^--'''
 By using ^^ character before syntax keyword or using ^{{something}}. If you still don't know how, take a look on wiki code of this page, there are plenty of examples. If you want to insert ^^ character, you have to double it, i.e. ^^^^
 
 !!HTML code
-Do you want to insert youtube video to your site? Or any other HTML code? Just insert it between ^{html}some html code{/html}.
+Do you want to insert youtube video to your site? Or any other HTML code? Just insert it between ^{html}some html code{/html}. This feature is potentially dangerous so there's option to turn it off in config file ($NO_HTML = true).
 
 {html}<object width="217" height="177"><param name="movie" value="http://www.youtube.com/v/OvZrhdy2UdY&amp;hl=cs&amp;fs=1"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/OvZrhdy2UdY&amp;hl=cs&amp;fs=1" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="217" height="177"></embed></object>{/html}
 
@@ -161,6 +158,3 @@ LionWiki joins adjacent newlines together, if you need more than one newline, us
 
 !!Internal comments
 ''Since LionWiki 2.0''. You can insert internal comments not intended to be displayed using HTML-like syntax ^<!^-- text not intended to be displayed ^-->
-
-{tags:syntax}
-
