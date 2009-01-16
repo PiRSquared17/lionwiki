@@ -56,7 +56,7 @@
 	if(empty($PASSWORD_MD5) && !empty($PASSWORD))
 		$PASSWORD_MD5 = md5($PASSWORD);
 
-	$WIKI_VERSION = "LionWiki 2.1.5";
+	$WIKI_VERSION = "LionWiki 2.1.6";
 	$PAGES_DIR = $BASE_DIR . "pages/";
 	$HISTORY_DIR = $BASE_DIR . "history/";
 	$PLUGINS_DIR = "plugins/";
@@ -465,15 +465,15 @@
 		$CON = "\n" . $CON . "\n";
 	
 		// Subpages
-		while(preg_match("/[^\^]{include:([^}]+)}/Um", $CON, $match)) {
-			if(!strcmp($match[1], $page)) // limited recursion protection
+		while(preg_match("/([^\^]){include:([^}]+)}/Um", $CON, $match)) {
+			if(!strcmp($match[2], $page)) // limited recursion protection
 				$CON = str_replace($match[0], "'''Warning: subpage recursion!'''", $CON);
-			elseif(file_exists($PAGES_DIR . $match[1] . ".txt")) {
-				$tpl = file_get_contents($PAGES_DIR . $match[1] . ".txt");
+			elseif(file_exists($PAGES_DIR . $match[2] . ".txt")) {
+				$tpl = file_get_contents($PAGES_DIR . $match[2] . ".txt");
 				
-				$CON = str_replace($match[0], $tpl, $CON);
+				$CON = str_replace($match[0], $match[1] . $tpl, $CON);
 			} else
-				$CON = str_replace($match[0], "'''Warning: subpage $match[1] was not found!'''", $CON);
+				$CON = str_replace($match[0], "'''Warning: subpage $match[2] was not found!'''", $CON);
 		}
 	
 		// save content not intended for substitutions ({html} tag)
@@ -731,7 +731,7 @@
 	
 		preg_match("/([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])-([0-9][0-9])([0-9][0-9])-([0-9][0-9])/U", $time, $m);
 		
-		return date($DATE_FORMAT, mktime($m[4] + $LOCAL_HOUR, $m[5], $m[6], $m[2], $m[3], $m[1]));
+		return date($DATE_FORMAT, mktime($m[4], $m[5], $m[6], $m[2], $m[3], $m[1]));
 	}
 	
 	function diff($f1, $f2, $short_diff = 0) {

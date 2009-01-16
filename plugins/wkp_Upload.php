@@ -195,6 +195,22 @@ class Upload
 		array("TP_NO_DATA_DIR", "Data directory doesn't exist"),
 		array("TP_NO_EXECUTABLE", "Upload of executable files is not permitted.")
 	);
+	
+	var $fr_strings = array(
+		array("TP_FILE_UPLOAD", "File upload"),
+		array("TP_FILE_NAME", "Nom du fichier/dossier"),
+		array("TP_FILE_TYPE", "Type"),
+		array("TP_FILE_SIZE", "Taille"),
+		array("TP_DELETE", "Supprimer"),
+		array("TP_ERROR_UPLOADING", "Une erreur a empêché le téléversement du fichier"),
+		array("TP_FILE", "Fichier"),
+		array("TP_DIRECTORY", "Dossier"),
+		array("TP_CREATE_DIRECTORY", "Créer un dossier"),
+		array("TP_UPLOAD", "Upload"),
+		array("TP_MAXIMUM_SIZE_IS", "Si vous avez besoin d'un dossier dans lequel vous voulez déposer un fichier, vous devez d'abord créer le dossier dans un premier temps puis téléverser le fichier.<br />La taille maximum à utiliser pour un fichier transféré est de"),
+		array("TP_NO_DATA_DIR", "Cet élément n'existe pas"),
+		array("TP_NO_EXECUTABLE", "Le téléversement de fichiers éxécutables n'est pas autorisé.")
+	);
 
   function localize()
   {
@@ -203,7 +219,7 @@ class Upload
     foreach($this->en_strings as $str)
       $this->$str[0] = $str[1];
 
-    if($LANG != "en" && isset(${$LANG . "_strings"}))
+    if($LANG != "en" && isset($this->{$LANG . "_strings"}))
       foreach($this->{$LANG . "_strings"} as $str)
         $this->$str[0] = $str[1];
   }
