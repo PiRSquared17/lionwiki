@@ -14,7 +14,6 @@
 	$T_RECENT_CHANGES = "Recent changes";
 	$T_LAST_CHANGED = "Last changed";
 	$T_HISTORY = "History";
-	$T_NO_HISTORY = "No history.";
 	$T_RESTORE = "Restore";
 	$T_REV_DIFF = "<b>Difference between revisions from {REVISION1} and {REVISION2}.</b>";
 	$T_REVISION = "'''This revision is from {TIME}. You can {RESTORE} it.'''\n\n";
@@ -25,7 +24,6 @@
 	$T_SHOW_SOURCE = "Show source";
 	$T_SHOW_PAGE = "Show page";
 	$T_ERASE_COOKIE = "Erase cookies";
-	$T_WIKI_CODE = "Wiki code";
 	$T_MOVE_TEXT = "New name";
 	$T_MOVE = "Move";
 	$T_DIFF = "diff";
