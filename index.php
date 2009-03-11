@@ -62,7 +62,7 @@
 	if(empty($PASSWORD_MD5) && !empty($PASSWORD))
 		$PASSWORD_MD5 = md5($PASSWORD);
 
-	$WIKI_VERSION = "LionWiki 2.2.2";
+	$WIKI_VERSION = "LionWiki 2.2.3";
 	$PAGES_DIR = $BASE_DIR . "pages/";
 	$HISTORY_DIR = $BASE_DIR . "history/";
 	$PLUGINS_DIR = "plugins/";
@@ -83,7 +83,6 @@
 	$T_RECENT_CHANGES = "Recent changes";
 	$T_LAST_CHANGED = "Last changed";
 	$T_HISTORY = "History";
-	$T_NO_HISTORY = "No history.";
 	$T_RESTORE = "Restore";
 	$T_REV_DIFF = "<b>Difference between revisions from {REVISION1} and {REVISION2}.</b>";
 	$T_REVISION = "'''This revision is from {TIME}. You can {RESTORE} it.'''\n\n";
@@ -94,7 +93,6 @@
 	$T_SHOW_SOURCE = "Show source";
 	$T_SHOW_PAGE = "Show page";
 	$T_ERASE_COOKIE = "Erase cookies";
-	$T_WIKI_CODE = "Wiki code";
 	$T_MOVE_TEXT = "New name";
 	$T_MOVE = "Move";
 	$T_DIFF = "diff";
@@ -191,7 +189,7 @@
 		
 		if($action == "" && file_exists($PAGES_DIR . $page . ".$LANG.txt")) // language variant
 			$page = $TITLE = $page_nolang . "." . $LANG;
-		else if(!file_exists($PAGES_DIR . $page . ".txt") && $action != "save")
+		else if(!file_exists($PAGES_DIR . $page . ".txt") && $action == "")
 			$action = "edit"; // create page if it doesn't exist
 			
 		if(!empty($preview))
@@ -210,6 +208,7 @@
 		$CON = "<form action=\"$self\" method=\"post\"><p>$T_PROTECTED_READ <input id=\"passworInput\" type=\"password\" name=\"sc\" /> <input class=\"submit\" type=\"submit\" /></p></form>";
 	
 		$action = "view-html";
+		$error = "error"; // so we know that something went wrong
 	}
 	else if($action == "save" && authentified()) { // do we have page to save?
 		$LAST_CHANGED_TIMESTAMP = @filemtime($PAGES_DIR . $page . ".txt");
@@ -302,12 +301,12 @@
 	else // there's no template file, we'll use default minimal template
 		$html = fallback_template();
 
-	if(!$CON && @file_exists($PAGES_DIR . $page . ".txt")) {
+	if(@file_exists($PAGES_DIR . $page . ".txt")) {
 		$LAST_CHANGED_TIMESTAMP = @filemtime($PAGES_DIR . $page . ".txt");
 		$LAST_CHANGED = date("Y/m/d H:i", $LAST_CHANGED_TIMESTAMP + $LOCAL_HOUR * 3600);
+	}
 	
-		$HISTORY = "<a href=\"$self?page=" . urlencode($page) . "&amp;action=history\" rel=\"nofollow\">" . $T_HISTORY . "</a>";
-	
+	if(!$CON) {
 		// Restoring old version of page
 		if($gtime && ($restore || $action == "rev") && ($file = @lwopen($HISTORY_DIR . $page . "/" . $gtime, "r"))) {
 			if($action == "rev") {
@@ -357,7 +356,7 @@
 			$CON_SUBMIT = "<input id=\"contentSubmit\" class=\"submit\" type=\"submit\" value=\"$T_DONE\" />";
 			
 			$EDIT_SUMMARY_TEXT = $T_EDIT_SUMMARY;
-			$EDIT_SUMMARY = "<input type=\"text\" name=\"esum\" id=\"esum\" value=\"\" />";
+			$EDIT_SUMMARY = "<input type=\"text\" name=\"esum\" id=\"esum\" value=\"".htmlspecialchars($esum)."\" />";
 		}
 			
 		$CON_PREVIEW = "<input id=\"contentPreview\" class=\"submit\" type=\"submit\" name=\"preview\" value=\"$T_PREVIEW\" />";
@@ -703,7 +702,7 @@
 		array("HOME", "<a href=\"$self?page=" . urlencode($START_PAGE) . "\">$T_HOME</a>"),
 		array("RECENT_CHANGES", "<a href=\"$self?action=recent\">$T_RECENT_CHANGES</a>"),
 		array("ERROR",	$error),
-		array("HISTORY", $HISTORY),
+		array("HISTORY", !empty($page) ? "<a href=\"$self?page=" . urlencode($page) . "&amp;action=history\" rel=\"nofollow\">" . $T_HISTORY . "</a>" : ""),
 		array("PAGE_TITLE", htmlspecialchars($page_nolang == $START_PAGE ? $WIKI_TITLE : $TITLE)),
 		array("PAGE_TITLE_HEAD", htmlspecialchars($page_nolang == $START_PAGE ? "" : $TITLE)),
 		array("EDIT", $EDIT),

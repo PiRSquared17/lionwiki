@@ -9,12 +9,10 @@
 	$T_RECENT_CHANGES	= "Posledné zmeny";
 	$T_LAST_CHANGED =	"Naposledy zmenené";
 	$T_HISTORY	= "História";
-	$T_NO_HISTORY = "Bez histórie.";
 	$T_RESTORE = "Obnoviť";
 	$T_PASSWORD = "Heslo";
 	$T_EDIT_SUMMARY = "Zhrnutie úpravy:";
 	$T_ERASE_COOKIE = "Zmazať cookies";
-	$T_WIKI_CODE = "Wiki kód";
 	$T_MOVE_TEXT = "Nové meno:";
 	$T_MOVE = "Presunúť";
 	$T_CREATE_PAGE = "Vytvoriť stránku s názvom";
