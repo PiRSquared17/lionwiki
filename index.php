@@ -64,7 +64,7 @@
 	if(empty($PASSWORD_MD5) && !empty($PASSWORD))
 		$PASSWORD_MD5 = md5($PASSWORD);
 
-	$WIKI_VERSION = "LionWiki 2.3.4";
+	$WIKI_VERSION = "LionWiki 2.3.5";
 	$PAGES_DIR = $BASE_DIR . "pages/";
 	$HISTORY_DIR = $BASE_DIR . "history/";
 	$PLUGINS_DIR = "plugins/";
@@ -747,6 +747,7 @@
 		array("HISTORY", !empty($page) ? "<a href=\"$self?page=" . urlencode($page) . "&amp;action=history\" rel=\"nofollow\">" . $T_HISTORY . "</a>" : ""),
 		array("PAGE_TITLE", htmlspecialchars($page_nolang == $START_PAGE ? $WIKI_TITLE : $TITLE)),
 		array("PAGE_TITLE_HEAD", htmlspecialchars($page_nolang == $START_PAGE ? "" : $TITLE)),
+		array("PAGE_URL", urlencode($page)),
 		array("EDIT", $EDIT),
 		array("WIKI_TITLE", $WIKI_TITLE),
 		array("LAST_CHANGED_TEXT", $LAST_CHANGED ? $T_LAST_CHANGED : ""),
