@@ -27,6 +27,7 @@ class PageVersions
 		"de-ch" => "Schweizerdeutsch",
 		"da" => "Dansk",
 		"en" => "English",
+		"eo" => "Esperanto",
 		"es" => "Español",
 		"fi" => "Eesti",
 		"fr" => "Français",
@@ -59,7 +60,7 @@ class PageVersions
 	  
 	  if($dir = @opendir($PAGES_DIR))
 			while($file = readdir($dir))
-				if(preg_match("/$p\.([a-z]+)\.txt|$p\.txt/", $file, $match))
+				if(preg_match("/$p\.([a-z\-]+)\.txt|$p\.txt/", $file, $match))
 					$versions[isset($match[1]) ? $match[1] : $this->default_lang] = $p;
 					
 		ksort($versions);

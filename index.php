@@ -64,7 +64,7 @@
 	if(empty($PASSWORD_MD5) && !empty($PASSWORD))
 		$PASSWORD_MD5 = md5($PASSWORD);
 
-	$WIKI_VERSION = "LionWiki 2.3.5";
+	$WIKI_VERSION = "LionWiki 2.3.6";
 	$PAGES_DIR = $BASE_DIR . "pages/";
 	$HISTORY_DIR = $BASE_DIR . "history/";
 	$PLUGINS_DIR = "plugins/";
@@ -207,7 +207,7 @@
 	
 	// does user need password to read content of site. If yes, ask for it.
 	if(!authentified() && $PROTECTED_READ) {
-		$CON = "<form action=\"$self\" method=\"post\"><p>$T_PROTECTED_READ <input id=\"passworInput\" type=\"password\" name=\"sc\" /> <input class=\"submit\" type=\"submit\" /></p></form>";
+		$CON = "<form action=\"$self\" method=\"post\"><p>$T_PROTECTED_READ <input id=\"passwordInput\" type=\"password\" name=\"sc\" /> <input class=\"submit\" type=\"submit\" /></p></form>";
 	
 		$action = "view-html";
 		$error = "error"; // so we know that something went wrong
@@ -274,7 +274,7 @@
 				if(!rename($PAGES_DIR . $page . ".txt", $PAGES_DIR . $moveto . ".txt"))
 					die("Moving page was not succesful! Page was not moved.");
 				else if(!rename($HISTORY_DIR . $page, $HISTORY_DIR . $moveto)) {
-					rename($PAGES_DIR . $moveto, $PAGES_DIR . $page); // revert previous change
+					rename($PAGES_DIR . $moveto . ".txt", $PAGES_DIR . $page . ".txt"); // revert previous change
 					die("Moving history of the page was not succesful! Page was not moved.");
 				}
 				else {
@@ -302,7 +302,7 @@
 		
 	if(@file_exists($PAGES_DIR . $page . ".txt")) {
 		$LAST_CHANGED_TIMESTAMP = @filemtime($PAGES_DIR . $page . ".txt");
-		$LAST_CHANGED = date("Y/m/d H:i", $LAST_CHANGED_TIMESTAMP + $LOCAL_HOUR * 3600);
+		$LAST_CHANGED = date($DATE_FORMAT, $LAST_CHANGED_TIMESTAMP + $LOCAL_HOUR * 3600);
 		
 		if(!$CON) {
 			$CON = @file_get_contents($PAGES_DIR . $page . ".txt");
@@ -752,7 +752,16 @@
 		array("WIKI_TITLE", $WIKI_TITLE),
 		array("LAST_CHANGED_TEXT", $LAST_CHANGED ? $T_LAST_CHANGED : ""),
 		array("LAST_CHANGED", $LAST_CHANGED),
-		array("TOC", $TOC), // must be before replacing CONTENT_FORM
+		array("TOC", $TOC),
+		array("CONTENT", $action != "edit" ? $CON : ""),
+		array("LANG", $LANG),
+		array("LIST_OF_ALL_PAGES", "<a href=\"$self?action=search\">$T_LIST_OF_ALL_PAGES</a>"),
+		array("WIKI_VERSION", $WIKI_VERSION),
+		array("DATE", date($DATE_FORMAT, time() + $LOCAL_HOUR * 3600)),
+		array("IP", $_SERVER['REMOTE_ADDR']),
+		array("SYNTAX", $action == "edit" || $preview ? "<a href=\"$self?page=" . urlencode($SYNTAX_PAGE) . "\" rel=\"nofollow\">$T_SYNTAX</a>" : ""),
+		array("SHOW_PAGE", $action == "edit" || $preview ?  "<a href=\"$self?page=".urlencode($page)."\">$T_SHOW_PAGE</a>" : ""),
+		array("COOKIE", '<a href="'.$self.'?page=' . urlencode($page) . '&amp;action='. urlencode($action) .'&amp;erasecookie=1" rel="nofollow">' . $T_ERASE_COOKIE . '</a>'),
 		array("CONTENT_FORM", $CON_FORM_BEGIN),
 		array("\/CONTENT_FORM", $CON_FORM_END),
 		array("CONTENT_TEXTAREA", $CON_TEXTAREA),
@@ -763,16 +772,7 @@
 		array("EDIT_SUMMARY_TEXT", $USE_META ? $EDIT_SUMMARY_TEXT : ""),
 		array("EDIT_SUMMARY_INPUT", $USE_META ? $EDIT_SUMMARY : ""),
 		array("FORM_PASSWORD", $FORM_PASSWORD),
-		array("FORM_PASSWORD_INPUT", $FORM_PASSWORD_INPUT),
-		array("CONTENT", $action != "edit" ? $CON : ""),
-		array("LANG", $LANG),
-		array("LIST_OF_ALL_PAGES", "<a href=\"$self?action=search\">$T_LIST_OF_ALL_PAGES</a>"),
-		array("WIKI_VERSION", $WIKI_VERSION),
-		array("DATE", date("Y/m/d H:i", time() + $LOCAL_HOUR * 3600)),
-		array("IP", $_SERVER['REMOTE_ADDR']),
-		array("SYNTAX", $action == "edit" || $preview ? "<a href=\"$self?page=" . urlencode($SYNTAX_PAGE) . "\" rel=\"nofollow\">$T_SYNTAX</a>" : ""),
-		array("SHOW_PAGE", $action == "edit" || $preview ?  "<a href=\"$self?page=".urlencode($page)."\">$T_SHOW_PAGE</a>" : ""),
-		array("COOKIE", '<a href="'.$self.'?page=' . urlencode($page) . '&amp;action='. urlencode($action) .'&amp;erasecookie=1" rel="nofollow">' . $T_ERASE_COOKIE . '</a>')
+		array("FORM_PASSWORD_INPUT", $FORM_PASSWORD_INPUT)
 	);
 
 	foreach($tpl_subs as $subs) // substituting values
