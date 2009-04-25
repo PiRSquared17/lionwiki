@@ -14,6 +14,7 @@ class SelectLanguage
 		"de-ch" => "Schweizerdeutsch",
 		"da" => "Dansk",
 		"en" => "English",
+		"eo" => "Esperanto",
 		"es" => "Español",
 		"fi" => "Eesti",
 		"fr" => "Français",
