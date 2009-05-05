@@ -25,7 +25,6 @@ More exclamation marks you use, smaller heading is (up to 5 exclamation marks). 
 
 !Lists
 !!Unordered list
-
 {{* Fruit
 ** Apple
 *** Granny smith
@@ -43,6 +42,7 @@ More exclamation marks you use, smaller heading is (up to 5 exclamation marks). 
 * Vegetables
 ** Garlic
 ** Onion
+
 
 !!Ordered list
 

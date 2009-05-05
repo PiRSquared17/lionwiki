@@ -295,4 +295,3 @@ Password: <input type=\"password\" name=\"sc\" />
 			$html = preg_replace("/\{([^}]* )?$subs[0]( [^}]*)?\}/U", "$1$subs[1]$2", $html);
 	}
 }
-?>
