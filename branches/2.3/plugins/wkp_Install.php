@@ -123,4 +123,3 @@ h1 {color:#006600;}
 	
 	var $html_delete = '<p>Even computers make mistakes, i.e. it\' possible that some registered problems are actually false alarms or they aren\'t important for you. If this is the case, you can skip this installation by deleting file plugins/wkp_Install.php and reloading the page.</p>';
 }
-?>
