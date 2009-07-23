@@ -41,7 +41,7 @@
 	if(!empty($BASE_DIR))
 	  @include($BASE_DIR . "_config.php"); // subdomain specific settings
 
-  $WIKI_VERSION = "LionWiki 1.0.1";
+  $WIKI_VERSION = "LionWiki 1.0.2";
   $PAGES_DIR = $BASE_DIR . "pages/";
   $HISTORY_DIR = $BASE_DIR . "history/";
   $PLUGINS_DIR = "plugins/";
@@ -129,7 +129,24 @@
     }
 
 	// list of variables for UTF-8 conversion and export
-  $req_conv = array('action', 'query', 'sc', 'content', 'page', 'moveto', 'restore', 'f1', 'f2', 'error', 'time');
+  $req_conv = array('action', 'query', 'sc', 'content', 'page', 'moveto', 'restore', 'f1', 'f2', 'error', 'gtime');
+
+$page = sanitizeFilename($page);
+$moveto = sanitizeFilename($moveto);
+$f1 = sanitizeFilename($f1);
+$f2 = sanitizeFilename($f2);
+$gtime = sanitizeFilename($gtime);
+
+function sanitizeFilename($filename)
+{
+	$ret = "";
+
+	for($i = 0, $c = strlen($filename); $i < $c; $i++)
+		if(!ctype_cntrl($filename[$i]))
+			$ret .= $filename[$i];
+
+	return trim(str_replace("..", "", $ret), "/");
+}
 
   if(extension_loaded('mbstring')) { // Conversion to UTF-8
     ini_set("mbstring.language", "Neutral"); 
