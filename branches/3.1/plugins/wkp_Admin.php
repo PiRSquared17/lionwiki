@@ -12,21 +12,17 @@
 
 class Admin
 {
-	/*
-	 * If you want to set password, place following line to config.php (without leading asterisk)
-	 *
-	 * $Admin["PASSWORD"] = sha1("my_admin_password");
-	 *
-	 * You could set it here too, but you'd loose this setting after upgrade ...
-	 */
-
-	var $PASSWORD = "1";
+	var $PASSWORD = "aaa"; // either $PASSWORD or $PASSWORD_MD5 must be set
+	var $PASSWORD_MD5 = ""; // if set, $PASSWORD is ignored
 	var $expire_login = 7200;
 	var $dir;
 
 	function Admin()
 	{
 		global $PLUGINS_DATA_DIR, $self;
+
+		if(empty($this->PASSWORD_MD5) && !empty($this->PASSWORD))
+			$this->PASSWORD_MD5 = md5($this->PASSWORD);
 
 		$this->dir = $GLOBALS["PLUGINS_DATA_DIR"];
 
@@ -73,7 +69,7 @@ class Admin
 		if(!empty($_POST["action"]) && $this->authentified() == false)
 			$ret .= '<div class="error">Wrong password. List was not updated. You can try again.</div>';
 		else if(!empty($_POST["action"]))
-			if($f = fopen(clear_path($filename), "wb")) {
+			if($f = fopen(sanitizeFilename($filename), "wb")) {
 				fwrite($f, $_POST["$dataname"]);
 
 				fclose($f);
@@ -211,14 +207,14 @@ class Admin
 	 * and in that case, page will be saved.
 	 */
 
-	function actionBegin()
+	function pageLoaded()
 	{
-		global $PASSWORD, $action;
+		global $PASSWORD_MD5, $action;
 
-		if($this->checkPages(false) == false) {
+		if($action == "edit" && $this->checkPages(false) == false) {
 			// with this, user will be thought as unlogged, so password input will appear
 			$_COOKIE["LW_AUT"] = "1"; // just keep these two different
-			$PASSWORD = "2";
+			$PASSWORD_MD5 = "2";
 		}
 	}
 
@@ -236,7 +232,7 @@ class Admin
 
 			foreach($arr as $line)
 				if(!strcmp($page, trim($line))) {
-					if(!strcasecmp(sha1($sc), $this->PASSWORD))
+					if(!strcasecmp(md5($sc), $this->PASSWORD_MD5))
 						return true;
 					else {
 						if($echo)
@@ -250,16 +246,16 @@ class Admin
 		return true;
 	}
 
-	/*
-	 * is it ok for all filters to save the page?
-	 *
-	 * By convention, writingPage hook is expected to return false if
-	 * everything is ok and true if page should not be saved.
-	 */
-
+	// is it ok for all filters to save the page?
 	function writingPage()
 	{
-		return !($this->checkIPs() && $this->checkBlacklist() && $this->checkPages());
+		global $plugin_saveok, $error;
+
+		$plugin_saveok = $this->checkIPs() && $plugin_saveok;
+		$plugin_saveok = $this->checkBlacklist() && $plugin_saveok;
+		$plugin_saveok = $this->checkPages() && $plugin_saveok;
+
+		return true;
 	}
 
 	// find out if page is editable by user
@@ -288,9 +284,19 @@ class Admin
 
 			$list = explode("\n", $fc);
 
-			foreach($list as $plug)
-				if(isset($plugins[$plug]))
-					unset($plugins[$plug]);
+			$count = count($plugins);
+
+			$i = 0;
+
+			while($i < $count)
+				if(in_array(get_class($plugins[$i]), $list)) {
+					$plugins[$i] = $plugins[$count - 1];
+
+					array_pop($plugins);
+					$count--;
+				}
+				else
+					$i++;
 		}
 	}
 
@@ -311,8 +317,8 @@ class Admin
 			$ret .= '
 <form action="'.$self.'" method="post">
 <input type="hidden" name="action" value="admin-deletecomment" />
-<input type="hidden" name="page" value="'.h($_REQUEST["page"]).'" />
-<input type="hidden" name="filename" value="'.h($_REQUEST["filename"]).'" />
+<input type="hidden" name="page" value="'.htmlspecialchars($_REQUEST["page"]).'" />
+<input type="hidden" name="filename" value="'.htmlspecialchars($_REQUEST["filename"]).'" />
 '.$T_PASSWORD.': <input type="text" name="sc" value="" />
 <input type="submit" value="Delete" />
 </form>';
@@ -321,13 +327,13 @@ class Admin
 			return $ret;
 		}
 		else {
-			$filename = clear_path($_REQUEST["filename"]);
-			$page = clear_path($_REQUEST["page"]);
+			$filename = sanitizeFilename($_REQUEST["filename"]);
+			$page = sanitizeFilename($_REQUEST["page"]);
 
 			if(preg_match("/([0-9]{8}-[0-9]{4}-[0-9]{2})\.txt/", $filename, $m)) // is it really a comment file?
 				unlink($plugins["Comments"]->comments_dir . $page . "/" . $filename);
 
-			Header("Location:$self?page=" . u($page) . "#commentWrap");
+			Header("Location:$self?page=" . urlencode($page) . "#commentWrap");
 			die();
 		}
 	}
@@ -349,8 +355,8 @@ class Admin
 
 	function authentified()
 	{
-		if(strlen($this->PASSWORD) > 0 && $_COOKIE["LW_ADMIN"] == $this->PASSWORD || (isset($_POST["sc"]) && sha1($_POST["sc"]) == $this->PASSWORD)) {
-			setcookie("LW_ADMIN", $this->PASSWORD, time() + $this->expire_login);
+		if(strlen($this->PASSWORD_MD5) > 0 && $_COOKIE["LW_ADMIN"] == $this->PASSWORD_MD5 || (isset($_POST["sc"]) && md5($_POST["sc"]) == $this->PASSWORD_MD5)) {
+			setcookie("LW_ADMIN", $this->PASSWORD_MD5, time() + $this->expire_login);
 
 			return true;
 		}

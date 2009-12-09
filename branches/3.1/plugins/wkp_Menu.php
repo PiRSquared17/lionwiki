@@ -57,24 +57,21 @@ class Menu
 		list($name, $link) = $parts;
 
 		if(substr($link, 0, 4) != "http" && substr($link, 0, 4) != "http" && substr($link, 0, 2) != "./" && $link[0] != "/")
-			$link = $GLOBALS["self"] . "?page=" . u($link);
+			$link = $GLOBALS["self"] . "?page=" . urlencode($link);
 
 		return array($link, $parts[0]);
 	}
 
-	function formatFinished()
+	function formatEnd()
 	{
-		global $CON, $action;
-
-		if($action != "")
-			return;
+		global $CON;
 
 		foreach($this->menus as $m) {
 			$template_file = $m[2];
 			list($parent_link, $parent_name) = $this->getLink($m[4]);
 			$item_string = $m[5];
 
-			$template_file = clear_path($template_file);
+			$template_file = sanitizeFilename($template_file);
 
 			if(empty($template_file) || !file_exists($this->template_dir . $template_file))
 				$template_file = $this->default_template; // use default.html template if none is provided or does not exist
@@ -106,7 +103,7 @@ class Menu
 
 				$items_str .= strtr($item_tmpl, array(
 					"{class}" => $class,
-					"{name}" => h($name),
+					"{name}" => htmlspecialchars($name),
 					"{link}" => $link
 				));
 			}

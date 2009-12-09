@@ -1,13 +1,14 @@
-<?php /* Configuration file for LionWiki. */
-$WIKI_TITLE = "My new wiki"; // name of the site
+<?php
+/* Configuration file for LionWiki. */
 
-// SHA1 hash of password. If empty (or commented out), no password is required
-// $PASSWORD = sha1("my_password");
+$WIKI_TITLE = "My new wiki"; // name of the site
+$PASSWORD = "AAA"; // if left blank, no password is required to edit. Consider also $PASSWORD_MD5 below
+// More secure way to use password protection, just insert MD5 hash into $PASSWORD_MD5
+// if not empty, $PASSWORD is ignored and $PASSWORD_MD5 is used instead
+$PASSWORD_MD5 = ""; // use e.g. http://www.md5.cz to generate MD5 hash
 
 $TEMPLATE = "templates/dandelion.html"; // presentation template
 
-// if true, you need to fill password for reading pages too
-// before setting to true, read http://lionwiki.0o.cz/index.php?page=UserGuide%3A+How+to+use+PROTECTED_READ
-$PROTECTED_READ = false;
+$PROTECTED_READ = true; // if true, you need to fill password for reading pages too
 
-$NO_HTML = true; // XSS protection
+$NO_HTML = false; // XSS protection

@@ -59,20 +59,31 @@ class Comments
 	{
 		global $PAGES_DIR;
 
-		$rg_url = "[0-9a-zA-Z\.\#/~\-_%=\?\&,\+\:@;!\(\)\*\$' ]*";
+		$rg_url = "[0-9a-zA-Z\.\#/~\-_%=\?\&,\+\:@;!\(\)\*\$']*";
+		$rg_link_local = "(" . $rg_url . ")";
+		$rg_link_http = "h(ttps?://" . $rg_url . ")";
 
-		$txt = preg_replace("#\[([^\]]+)\|(\./($rg_url)|(https?://$rg_url))\]#U", '<a href="$2" class="external">$1</a>', $txt);
-		$txt = preg_replace("#(?<!\")(https?://$rg_url)#i", '<a href="$0" class="external">$1</a>', $txt);
+		$txt = preg_replace('#\[([^\]]+)\|' . $rg_link_http . '\]#U', '<a href="xx$2" class="url external">$1</a>', $txt);
+		// local links has to start either with / or ./
+		$txt = preg_replace('#\[([^\]]+)\|\.\/' . $rg_link_local . '\]#U', '<a href="$2" class="url">$1</a>', $txt);
+		$txt = preg_replace('#' . $rg_link_http . '#i', '<a href="$0" class="url external">xx$1</a>', $txt);
+		$txt = preg_replace('#xxttp#', 'http', $txt);
 
-		preg_match_all("/\[(?:([^|\]]+)\|)?([^\]#]+)(?:#([^\]]+))?\]/", $txt, $matches, PREG_SET_ORDER); // matching Wiki links
+		preg_match_all("/\[([^|\]]+\|)?([^\]#]+)(#[^\]]+)?\]/", $txt, $matches, PREG_SET_ORDER); // matching Wiki links
 
-		foreach($matches as $m) {
-			$m[1] = $m[1] ? $m[1] : $m[2]; // is page label same as its name?
-			$m[3] = $m[3] ? "#".u(preg_replace("/[^\da-z]/i", "_", $m[3])) : ""; // anchor
+		foreach($matches as $match) {
+			if(empty($match[1])) // is page label same as its name?
+				$match[1] = $match[2];
+			else
+				$match[1] = rtrim($match[1], "|");
 
-			$attr = file_exists("$PAGES_DIR$m[2].txt") ? $m[3] : '&action=edit" class="pending"';
+			if($match[3]) // link to the heading
+				$match[3] = "#" . preg_replace("/[^\da-z]/i", "_", urlencode(substr($match[3], 1, strlen($match[3]) - 1)));
 
-			$txt = str_replace($m[0], '<a href="'.$self.'?page='.u($m[2]).$attr.'">'.$m[1].'</a>', $txt);
+			if(file_exists($PAGES_DIR . "$match[2].txt"))
+				$txt = str_replace($match[0], '<a href="'.$self.'?page=' . urlencode($match[2]) . $match[3] . '">' . $match[1] . '</a>', $txt);
+			else
+				$txt = str_replace($match[0], '<a href="'.$self.'?page=' . urlencode($match[2]) . '&amp;action=edit" class="pending" rel="nofollow">' . $match[1] . '</a>', $txt);
 		}
 
 		$txt = preg_replace('#([0-9a-zA-Z\./~\-_]+@[0-9a-z/~\-_]+\.[0-9a-z\./~\-_]+)#i', '<a href="mailto:$0">$0</a>', $txt);
@@ -111,12 +122,12 @@ class Comments
 				"{FORM_EMAIL}" => $this->TP_FORM_EMAIL,
 				"{FORM_CONTENT}" => $this->TP_FORM_CONTENT,
 				// Following 3 are for failed captcha test
-				"{FORM_NAME_VALUE}" => $comment_captcha_failed ? h($_POST["name"]) : "",
-				"{FORM_EMAIL_VALUE}" => $comment_captcha_failed ? h($_POST["email"]) : "",
-				"{FORM_CONTENT_VALUE}" => $comment_captcha_failed ? h($_POST["content"]) : "",
+				"{FORM_NAME_VALUE}" => $comment_captcha_failed ? htmlspecialchars($_POST["name"]) : "",
+							"{FORM_EMAIL_VALUE}" => $comment_captcha_failed ? htmlspecialchars($_POST["email"]) : "",
+				"{FORM_CONTENT_VALUE}" => $comment_captcha_failed ? htmlspecialchars($_POST["content"]) : "",
 				"{FORM_SUBMIT}" => $this->TP_FORM_SUBMIT,
-				"{FORM_SELF}" => h($self),
-				"{FORM_PAGE}" => h($page),
+				"{FORM_SELF}" => htmlspecialchars($self),
+				"{FORM_PAGE}" => htmlspecialchars($page),
 				"{COMMENTS}" => $this->TP_COMMENTS
 			));
 
@@ -157,16 +168,16 @@ class Comments
 
 					$items_str .= strtr($item_tmpl, array(
 						"{CONTENT}" => $processed_content,
-						"{NAME}" => h($name),
-						"{EMAIL}" => h($email),
-						"{NAME_TO_EMAIL}" => $email == "" ? $name : ("<a href=\"mailto:".h($email)."\">" . h($name) . "</a>"),
+						"{NAME}" => htmlspecialchars($name),
+						"{EMAIL}" => htmlspecialchars($email),
+						"{NAME_TO_EMAIL}" => $email == "" ? $name : ("<a href=\"mailto:".htmlspecialchars($email)."\">" . htmlspecialchars($name) . "</a>"),
 						"{IP}" => $ip,
-						"{DATE}" => rev_time(basename($filename, ".txt")),
+						"{DATE}" => revTime(basename($filename, ".txt")),
 						"{ID}" => basename($filename, ".txt"),
 						"{NUMBER}" => $comment_num,
-						"{DELETE}" => h($this->TP_DELETE),
-						"{DELETE_LINK}" => "$self?action=admin-deletecomment&amp;page=" . u($page) . "&amp;filename=" . u($filename),
-						"{DELETE_CONFIRM}" => h($this->TP_DELETE_CONFIRM)
+						"{DELETE}" => htmlspecialchars($this->TP_DELETE),
+						"{DELETE_LINK}" => "$self?action=admin-deletecomment&amp;page=" . urlencode($page) . "&amp;filename=" . urlencode($filename),
+						"{DELETE_CONFIRM}" => htmlspecialchars($this->TP_DELETE_CONFIRM)
 					));
 				}
 			}
@@ -175,7 +186,7 @@ class Comments
 
 			$comments_html = preg_replace("/\{item\}.*\{\/item\}/Us", $items_str, $tmpl);
 
-			plugin("commentsTemplate");
+			plugin_call_method("commentsTemplate");
 
 			$html = template_replace("plugin:COMMENTS", $comments_html, $html);
 			$CON = str_replace("{COMMENTS}", $comments_html, $CON);
@@ -183,7 +194,7 @@ class Comments
 
 		$CON = str_replace("{NO_COMMENTS}", "", $CON);
 
-		$HEAD .= "\n<link rel=\"alternate\" type=\"application/rss+xml\" title=\"RSS ".h($this->TP_COMMENTS)."\" href=\"$this->rss_file\" />\n";
+		$HEAD .= "\n<link rel=\"alternate\" type=\"application/rss+xml\" title=\"RSS ".htmlspecialchars($this->TP_COMMENTS)."\" href=\"$this->rss_file\" />\n";
 	}
 
 	function actionBegin()
@@ -191,14 +202,18 @@ class Comments
 		global $page, $LOCAL_HOUR, $plugins, $action, $plugin_saveok, $error, $comment_captcha_failed;
 
 		if($action == "save-comment") {
-			if(isset($plugins["Captcha"]) && $plugins["Captcha"]->checkCaptcha() == true) {
-				$comment_captcha_failed = true;
-				$action = "";
-				$error = ""; // suppress error messages
+			if(isset($plugins["Captcha"])) {
+				$plugins["Captcha"]->checkCaptcha();
 
-				unset($_REQUEST["qid"]); // don't check captcha again
+				if($plugin_saveok == false) {
+					$comment_captcha_failed = true;
+					$action = "";
+					$error = ""; // suppress error messages
 
-				return true;
+					unset($_REQUEST["qid"]); // don't check captcha again
+
+					return true;
+				}
 			}
 
 			if(!is_dir(rtrim($this->comments_dir, "/"))) {
@@ -266,10 +281,10 @@ class Comments
 
 		$n_item = "
 <item>
-	<title>".h($page)."</title>
+	<title>".htmlspecialchars($page)."</title>
 	<pubDate>". date("r")."</pubDate>
-	<link>$pagelink?page=".u($page)."#$id</link>
-	<description><pre>".h($content)."</pre></description>
+	<link>$pagelink?page=".urlencode($page)."#$id</link>
+	<description><pre>".htmlspecialchars($content)."</pre></description>
 </item>";
 
 		$rss = str_replace('{WIKI_TITLE}', $WIKI_TITLE . ": " . $this->TP_COMMENTS, $this->rss_template);
@@ -310,17 +325,6 @@ class Comments
 		array("TP_COMMENTS", "Comments"),
 		array("TP_DELETE", "Delete"),
 		array("TP_DELETE_CONFIRM", "Do you really want to delete this comment?")
-	);
-
-	var $fr_strings = array(
-		array("TP_FORM_NAME", "Votre nom"),
-		array("TP_FORM_EMAIL", "E-mail"),
-		array("TP_FORM_CONTENT", "Votre commentaire"),
-		array("TP_FORM_SUBMIT", "Envoyer"),
-		array("TP_REPLY_TO", "Répondre à ce commentaire"),
-		array("TP_COMMENTS", "Commentaires"),
-		array("TP_DELETE", "Supprimer"),
-		array("TP_DELETE_CONFIRM", "Voulez-vous supprimer ce commentaire ?")
 	);
 
 
