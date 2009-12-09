@@ -11,8 +11,7 @@ html{font:96% sans-serif;color:#000;background:#f7f7f7;line-height:1.4;}
 body{color:#333;}
 #wrapper{margin:auto;width:60em;position:relative;}
 #header{padding:0px 0px 7px 0px;}
-#content{background:white;padding:1em;border:1px solid #e0d78a;outline:0.5em solid #fef4a4;margin:0.5em 0;padding:20px;min-height:20em;}
-#content * {outline: 0;}
+#content{background:white;padding:1em;border:1px solid #e0d78a;outline:0.5em solid #fef4a4;  margin:0.5em 0;padding:20px;min-height:20em;}
 h1{margin-top:0px;}
 h1,h2,h3,h4,h5,h6{letter-spacing:0.05em;color:#1474CA;font-weight:normal;}
 h1 a:hover,h2 a:hover,h3 a:hover,h4 a:hover,h5 a:hover,h6 a:hover{text-decoration:none;}
@@ -39,6 +38,10 @@ form{display:inline;}
 #toc{margin:5px 0 5px 10px;padding:6px 5px 7px 0px;float:right;list-style:none;outline:0.4em solid #eee;background:#fef4a4;border:1px solid #e0d78a;}
 #toc ul{list-style:none;padding:3px 0 3px 10px;}
 #toc li{font-size:11px;padding-left:10px;}
+#toc ul li{font-size:10px;}
+#toc ul ul li{font-size:9px;}
+#toc ul ul ul li{font-size:8px;}
+#toc ul ul ul ul li{font-size:7px;}
 .rc-diff, .rc-date, .rc-ip, .rc-size {font-size: smaller}
 /* Following are plugin specific styles */
 .pageVersionsList{letter-spacing:0px;font-variant:normal;font-size:12px;}
@@ -83,6 +86,7 @@ a.toolbarTextareaItem {padding-right: 10px;}
 
 		{plugin:COMMENTS}
 	</div>
+	
 	<div id="footer">
 		<div style="float:left;">
 		{SEARCH_FORM}{SEARCH_INPUT}{SEARCH_SUBMIT}{/SEARCH_FORM} Powered by <a href="http://lionwiki.0o.cz/">LionWiki</a>

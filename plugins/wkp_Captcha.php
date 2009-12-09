@@ -31,15 +31,9 @@ class Captcha
 		$this->cookie_password = md5($_SERVER["SCRIPT_FILENAME"]); // pseudo random string
 	}
 
-	/*
-	 * This is for the possibility of authentization during the preview
-	 */
-
 	function actionBegin()
 	{
-		global $preview;
-
-		if($_REQUEST["qid"] && $preview)
+		if($_REQUEST["qid"])
 			$this->checkCaptcha();
 	}
 
@@ -102,23 +96,21 @@ class Captcha
 		return $str;
 	}
 
-	/*
-	 * By convention, writingPage hook is expected to return false if
-	 * everything is ok and true if page should not be saved.
-	 */
-
 	function checkCaptcha()
 	{
-		global $PASSWORD, $error;
+		global $PASSWORD_MD5, $error, $plugin_saveok;
 
-		if(!empty($PASSWORD) || ($this->permanent && $_COOKIE["LW_CAPTCHA"] == $this->cookie_password))
-			return false;
+		if(!empty($PASSWORD_MD5) || ($this->permanent && $_COOKIE["LW_CAPTCHA"] == $this->cookie_password))
+			return true;
 
 		$question_id = $_REQUEST["qid"];
 		$answer = trim($_REQUEST["ans"]);
 
-		if(empty($question_id) || empty($answer) || !is_numeric($question_id))
+		if(empty($question_id) || empty($answer) || !is_numeric($question_id)) {
+			$plugin_saveok = false;
+
 			return true;
+		}
 
 		$right_answers = explode(",", $this->getQuestion($question_id, 2));
 
@@ -136,19 +128,22 @@ class Captcha
 				break;
 			}
 
-		if(!$equals)
+		if(!$equals) {
 			$error = "Captcha plugin: Given answer is not correct. Try again.";
 
-		return !$equals;
+			$plugin_saveok = false;
+		}
+
+		return true;
 	}
 
-	function writingPage() { return $this->checkCaptcha(); }
+	function writingPage() { $this->checkCaptcha(); }
 
 	function template()
 	{
-		global $html, $PASSWORD, $action, $preview;
+		global $html, $PASSWORD_MD5, $action, $preview;
 
-		if(($action != "edit" && !$preview) || !empty($PASSWORD)
+		if(($action != "edit" && !$preview) || !empty($PASSWORD_MD5)
 			|| ($this->permanent && $_COOKIE["LW_CAPTCHA"] == $this->cookie_password))
 			return;
 
@@ -162,9 +157,9 @@ class Captcha
 
 	function commentsTemplate()
 	{
-		global $comments_html, $PASSWORD;
+		global $comments_html;
 
-		if(!empty($PASSWORD) || ($this->permanent && $_COOKIE["LW_CAPTCHA"] == $this->cookie_password)) {
+		if(!empty($PASSWORD_MD5) || ($this->permanent && $_COOKIE["LW_CAPTCHA"] == $this->cookie_password)) {
 			$comments_html = template_replace("plugin:CAPTCHA_QUESTION", "", $comments_html);
 			$comments_html = template_replace("plugin:CAPTCHA_INPUT", "", $comments_html);
 

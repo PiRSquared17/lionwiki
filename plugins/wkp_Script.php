@@ -43,12 +43,12 @@ class Script
 				$attr = "";
 
 				if($title != "")
-					$attr .= " title=\"" . h($title) . "\"";
+					$attr .= " title=\"" . htmlspecialchars($title) . "\"";
 
 				if($key != "")
 					$attr .= " accesskey=\"$key\"";
 
-				$jscript = "<a href=\"javascript:" . h($code) . "\"$attr>" . h($label) . "</a>";
+				$jscript = "<a href=\"javascript:" . htmlspecialchars($code) . "\"$attr>" . htmlspecialchars($label) . "</a>";
 			} else
 				$jscript = "<script type=\"text/javascript\"" . ($src != "" ? " src=\"$src\"" : "") . ">$code</script>";
 

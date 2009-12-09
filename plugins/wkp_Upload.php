@@ -49,15 +49,15 @@ class Upload
 			$TITLE = $this->TP_FILE_UPLOAD;
 
 			if(is_dir($this->datadir)) {
-				$rel_dir = ltrim(clear_path($_REQUEST['curdir']), "/");
+				$rel_dir = ltrim(sanitizeFilename($_REQUEST['curdir']), "/");
 				$abs_dir = $this->datadir . $rel_dir;
 
 				if(authentified()) {
 					if(!empty($_POST['dir2create']))
-						@mkdir($abs_dir . '/' . clear_path($_POST['dir2create']), $this->chmod_dir);
+						@mkdir($abs_dir . '/' . sanitizeFilename($_POST['dir2create']), $this->chmod_dir);
 					elseif(!empty($_FILES['file']['tmp_name'])) { // anything to upload?
 						if(is_uploaded_file($_FILES['file']['tmp_name'])) {
-							$filename = clear_path($_FILES['file']['name']);
+							$filename = sanitizeFilename($_FILES['file']['name']);
 
 							foreach($this->blacklist as $file) // executable files not allowed
 								if(preg_match("/" . preg_quote($file) . "/i", $filename)) {
@@ -75,7 +75,7 @@ class Upload
 						$error = "$this->TP_ERROR_UPLOADING ($_FILES[file][error])";
 
 					if(isset($_GET['del'])) { // delete file/directory
-						$file = clear_path($_GET['del']);
+						$file = sanitizeFilename($_GET['del']);
 
 						$ret = is_dir($this->datadir . $file) ? @rmdir($this->datadir . $file) : @unlink($this->datadir . $file);
 					}
@@ -113,12 +113,12 @@ class Upload
 						$CON .= "<tr>";
 
 						if(is_dir($this->datadir . $path))
-							$CON = $CON . '<td><a href="'.$self.'?action=' . $action . '&curdir=' . u($path) . '">[' . $file[0] . ']</a></td><td>' . $this->TP_DIRECTORY . '</td><td>-</td>';
+							$CON = $CON . '<td><a href="'.$self.'?action=' . $action . '&curdir=' . urlencode($path) . '">[' . $file[0] . ']</a></td><td>' . $this->TP_DIRECTORY . '</td><td>-</td>';
 						else
 							$CON = $CON . '<td><a href="' . $this->datadir . $path . '">' . $file[0] . '</a></td><td>' . $this->TP_FILE . '</td><td>' . @number_format(@filesize($this->datadir . $path), 0, ".", " ") . ' B</td>';
 
 						if((authentified()) && ($file[0] != '..'))
-							$CON .= '<td><a title="delete" href="'.$self.'?action=upload&del=' . u($path) . "&curdir=" . u($rel_dir) . '">&times;</a></td>';
+							$CON .= '<td><a title="delete" href="'.$self.'?action=upload&del=' . urlencode($path) . "&curdir=" . urlencode($rel_dir) . '">&times;</a></td>';
 						else
 							$CON .= "<td>&nbsp;</td>";
 

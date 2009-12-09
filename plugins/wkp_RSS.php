@@ -27,7 +27,7 @@ class RSS {
 </channel>
 </rss>'; // don't change template. This exact form is needed for correct functioning.
 
-	function pageWritten()
+	function pageWritten($file)
 	{
 		global $WIKI_TITLE, $PAGES_DIR, $page, $HISTORY_DIR, $LANG, $TIME_FORMAT, $VAR_DIR, $USE_HISTORY, $PROTECTED_READ;
 
@@ -65,7 +65,7 @@ class RSS {
 	<item>
 	  <title>$page</title>
 	  <pubDate>". date("r", $timestamp)."</pubDate>
-	  <link>$pagelink?page=".u($page)."</link>
+	  <link>$pagelink?page=".urlencode($page)."</link>
 	  <description>$newest</description>
 	</item>";
 		} else

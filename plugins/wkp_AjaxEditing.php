@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * AjaxEditing plugin for LionWiki, licensed under GNU/GPL
  *
  * (c) Adam Zivner 2009 adam.zivner@gmail.com, GPL'd
@@ -11,7 +11,7 @@ class AjaxEditing
 		array("AjaxEditing", "Guess what. AJAX editing :)")
 	);
 
-	/*
+	/**
 	 * Number of rows of edit textarea reflects number of lines of edited paragraphs.
 	 * Too big or too small edit textarea wouldn't be good, so here are the limits:
 	 */
@@ -19,14 +19,14 @@ class AjaxEditing
 	var $rows_min = 3;
 	var $rows_max = 20;
 
-	/*
+	/**
 	 * Substitute edit template
 	 */
 
 	function formatFinished()
 	{
 		global $CON, $content, $self, $showsource, $page, $esum, $error, $preview, $par, $action, $html;
-		global $T_PASSWORD, $T_EDIT_SUMMARY, $T_PREVIEW, $T_DONE, $T_DISCARD_CHANGES;
+		global $T_PASSWORD, $T_MOVE_TEXT, $T_EDIT_SUMMARY, $T_PREVIEW, $T_DONE, $T_DISCARD_CHANGES;
 
 		if(!$_REQUEST["ajax"])
 			return;
@@ -49,18 +49,22 @@ class AjaxEditing
 			$FORM_PASSWORD_INPUT = "<input class=\"ajaxPasswordInput\" type=\"password\" name=\"sc\" />";
 		}
 
+		if(!$showsource) {
+			$RENAME_TEXT = $T_MOVE_TEXT;
+			$RENAME_INPUT = "<input class=\"ajaxRenameInput\" type=\"text\" name=\"moveto\" value=\"" . htmlspecialchars($moveto ? $moveto : $page) . "\" />";
+		}
 
 		$CON_FORM_BEGIN = "<form action=\"$self\" class=\"ajaxForm\" method=\"post\"><input type=\"hidden\" name=\"action\" value=\"save\" /><input class=\"ajaxShowSource\" type=\"hidden\" name=\"showsource\" value=\"$showsource\" />";
 
 		$CON_FORM_END = "</form>";
 
-		$CON_TEXTAREA = "<textarea name=\"content\" class=\"ajaxContentTextarea contentTextarea\" cols=\"83\" rows=\"$rows\">" . h($content ? $content : $CON) . "</textarea><input type=\"hidden\" id=\"ajaxPage\" name=\"page\" value=\"$page\" />";
+		$CON_TEXTAREA = "<textarea name=\"content\" class=\"ajaxContentTextarea contentTextarea\" cols=\"83\" rows=\"$rows\">" . htmlspecialchars($content ? $content : $CON) . "</textarea><input type=\"hidden\" id=\"ajaxPage\" name=\"page\" value=\"$page\" />";
 
 		if(!$showsource) {
 			$CON_SUBMIT = "<input class=\"submit ajaxContentSubmit\" onclick=\"ajaxAction('save', this);return false;\" type=\"submit\" value=\"$T_DONE\" />";
 
 			$EDIT_SUMMARY_TEXT = $T_EDIT_SUMMARY;
-			$EDIT_SUMMARY = "<input type=\"text\" name=\"esum\" class=\"ajaxEsum\" value=\"".h($esum)."\" />";
+			$EDIT_SUMMARY = "<input type=\"text\" name=\"esum\" class=\"ajaxEsum\" value=\"".htmlspecialchars($esum)."\" />";
 		}
 
 		$CON_PREVIEW = "<input class=\"ajaxContentPreview\" class=\"submit\" onclick=\"ajaxAction('edit&preview=1', this);return false;\" type=\"submit\" name=\"preview\" value=\"$T_PREVIEW\" /> <input type=\"submit\" onclick=\"ajaxAction('', this);return false;\" value=\"$T_DISCARD_CHANGES\" />";
@@ -80,7 +84,7 @@ class AjaxEditing
 
 		$html = @file_get_contents("plugins/AjaxEditing/template.html");
 
-		plugin("template"); // plugin specific template substitutions
+		plugin_call_method("template"); // plugin specific template substitutions
 
 		foreach($subs as $s)
 			$html = template_replace($s[0], $s[1], $html);
@@ -90,21 +94,9 @@ class AjaxEditing
 		die(($preview ? $CON : "") . $html);
 	}
 
-	function pageWritten()
-	{
-		global $CON;
+	function formatBegin() {
+		global $HEAD;
 
-		if($_REQUEST["ajax"]) {
-			$CON = $_REQUEST["content"];
-
-			return true;
-		}
-		else
-			return false;
-	}
-
-	function formatBegin()
-	{
-		$GLOBALS["HEAD"] .= '<script type="text/javascript" src="plugins/AjaxEditing/ajax.js"></script>';
+		$HEAD .= '<script type="text/javascript" src="plugins/AjaxEditing/ajax.js"></script>';
 	}
 }

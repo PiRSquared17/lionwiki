@@ -63,14 +63,14 @@ class SyntaxHighlighter
 			$CON = str_replace($code[1], "{SYNTAX}", $CON);
 
 		if($_GET["plaincode"]) // "almost plain text"
-			die("<pre>" . h($this->codes[(int) $_GET["num"]][3]) . "</pre>");
+			die("<pre>" . htmlspecialchars($this->codes[(int) $_GET["num"]][3]) . "</pre>");
 	}
 
-	function formatFinished()
+	function formatEnd()
 	{
-		global $CON, $PLUGINS_DIR, $page, $action;
+		global $CON, $PLUGINS_DIR, $page;
 
-		if($action == "" && $this->n_codes > 0) {
+		if($this->n_codes > 0) {
 			include_once $PLUGINS_DIR . 'SyntaxHighlighter/geshi.php';
 
 			$i = 0;
@@ -92,7 +92,7 @@ class SyntaxHighlighter
 						$header_template .= "{LANGUAGE} ";
 
 					if($this->plain_text_link)
-						$header_template .= '(<a href="'.$self.'?page='.u($page).'&amp;plaincode=1&amp;num='.$i.'">plain</a>)';
+						$header_template .= '(<a href="'.$self.'?page='.urlencode($page).'&amp;plaincode=1&amp;num='.$i.'">plain</a>)';
 
 					$geshi->set_header_content($header_template);
 				}
